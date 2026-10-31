@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lerobot_policy_act_onnx_qnn"
+version = "0.1.0"
+description = "ACT policy inference on the Qualcomm Hexagon NPU via ONNX Runtime's QNN execution provider, using a Qualcomm-AI-Hub-compiled .onnx. Plugs into lerobot-rollout as a custom policy type (act_onnx_qnn)."
+requires-python = ">=3.10"
+dependencies = [
+    "lerobot",
+    "numpy",
+]
+
+# onnxruntime-qnn (ONNX Runtime built with the QNN execution provider) is
+# only installable/usable on the IQ-9075 board itself, not on a dev machine
+# like a Mac. So it is an optional extra, imported lazily inside the policy
+# class, so this package still installs and is importable (for config
+# inspection, testing, etc.) on machines that will never run inference.
+[project.optional-dependencies]
+# Versions confirmed working with the >= 2.7 EP API this plugin uses
+# (register_execution_provider_library / get_ep_devices /
+# add_provider_for_devices). onnxruntime-qnn must match the onnxruntime core.
+qnn = ["onnxruntime==1.29.0", "onnxruntime-qnn==2.7.0"]
+
+[tool.setuptools.packages.find]
+include = ["lerobot_policy_act_onnx_qnn*"]
